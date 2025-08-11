@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
@@ -188,10 +189,17 @@ fun LineChart(
             }
         }
 
+    val indicatorWidth =
+        (
+            labelProperties.labels
+                .map { textMeasurer.measure(it).size.width }
+                .average() / labelProperties.labels.size
+        ).toFloat()
+
     val xPadding =
         remember {
             if (indicatorProperties.enabled && indicatorProperties.position == IndicatorPosition.Horizontal.Start) {
-                indicatorAreaWidth
+                indicatorAreaWidth - indicatorWidth
             } else {
                 0f
             }
@@ -386,6 +394,7 @@ fun LineChart(
                         Modifier
                             .weight(1f)
                             .fillMaxSize()
+                            .padding(start = (0.5f * indicatorWidth / density.density).dp, end = (indicatorWidth / density.density).dp)
                             .pointerInput(data, minValue, maxValue, linesPathData) {
                                 if (!popupProperties.enabled || data.all { it.popupProperties?.enabled == false }) {
                                     return@pointerInput
